@@ -65,19 +65,23 @@
             <br>
             <p align="left"> Recently I've spent good chunk of time
               implementing and studying the effecacy of utilizing
-              geometric multigrid for solving partial differntial
+              geometric multigrid for solving partial differential
               equations (PDEs) on unstructured grids.</p>
 
             <br>
 
-            <p align="left"> Geometric Multigrid is particularly effective as its known
-            to perform optimally as a black box PDE solver for elliptic PDEs. The
-            technique operates by smoothing the solution on a series of coarser
-            sub-problems whose information can then be used to repeatedly
-            solve the originally desired fine grid problem in a highly
-            efficient fashion. The method is algorithmically scaleable, and it
-            converges to the solution in a fixed number of iterations that is
-            independent of the mesh resolution.
+            <p align="left"> Geometric Multigrid is a particularly
+            effective solution technique; it's an algorithmically
+            optimal ( $O(n)$ ) solution technique, in both memory
+            requirements as well as computational cost, and lends
+            itself naturally to parallelization via domain
+            decomposition. The technique operates by smoothing the
+            solution errors on a series of coarser sub-problems whose
+            information can then be used to repeatedly solve the
+            originally desired fine grid problem in a highly efficient
+            fashion. The method is algorithmically scaleable, and it
+            converges to the solution in a fixed number of iterations
+            that is independent of the mesh resolution.
 
             The key aspect and difficulty of such a technique is
             implementing it in an efficient, parallel manner which is
@@ -97,8 +101,8 @@
 
             <br>
 
-            <p align="left"> libMesh is used to partition the domain amongst
-            processors, refine the mesh, and then manage
+            <p align="left"> libMesh is used to partition the domain
+            amongst processors, refine the mesh, and then manage
             local-to-global degree of freedom information as well as
             ghosted element info which must be periodically
             communicated amongst processors.The multigrid technique
@@ -106,12 +110,22 @@
             projection and interpolation operators which become
             fundamental pieces to the overall algorithm. </p>
 
-            <img src="imgs/partitioning_refinement.svg" alt="Partitioning and Refinement Example" width="600" align="center">
+            <img src="imgs/partitioning_refinement.svg"
+                 alt="Partitioning and Refinement Example"
+                 width="600" align="center">
 
 
-            <p align="left"> As a simple example of the solver in action we can
-            consider a square domain with insulated boundaries which
-            is forced internally with some heat source given by: </p>
+            <p align="left"> As a simple example of the solver in
+              action we can consider Poisson's equation, the
+              prototypical elliptic PDE which models diffusive
+              processes. Poisson's equation has a strong formulation
+              given by: </p>
+
+              $$\nabla u = b(x)$$.
+
+            <p align="left"> For a specific instance we can choose a
+            square domain with insulated boundaries which is forced
+            internally with some heat source given by: </p>
 
             $$b(x) = 2\pi^2 \sin(\pi x)\sin(\pi y)$$.
 
@@ -125,39 +139,84 @@
 
             <br>
 
-            <p align="left"> As expected, this gives rise to optimal convergence rates
-            which we can compute by comparing our computed solution to
-            an exact solution generated via the method of manufactured
-            solutions. </p>
+            <p align="left"> As expected, this gives rise to optimal
+            convergence rates which we can compute by comparing our
+            computed solution to an exact solution generated via the
+            method of manufactured solutions. </p>
 
             <img src="imgs/vcycle_vs_fmg.svg" alt="V cycles vs FMG convergence">
 
-            <p align="left"> By changing a few runtime parameters from
-            the command line we can instead solve a 3D problem where
-            instead we heat one wall, insulate the rest of the faces,
-            and upon solving the problem with multigrid we can recover
-            the expected linear temperature gradient in a
-            cross-section of the domain as presented below. </p>
+            <p align="left">
+              We can also utilize multigrid to resolve more complicated physics problems.
+            </p>
 
-            <img src="imgs/hotcold_3d.svg" alt="3D Poisson Solution with Hot-Cold Boundaries">
 
-            <p align="left"> We can similarly study more exotic physics. For example here we
-            consider thermally driven flow which utilizes a Boussinesq
-            approximation to couple the energy balance equation to that of the
-            incompressible Navier Stokes formulation discussed previouslly. In the
-            figure below we can observe the formation of thermal vortices, a
-            phenomena which is particularly difficult for black box solvers to
-            resolve. </p>
+            <p align="left"> We can similarly study more exotic
+            physics. For example here we consider thermally driven
+            flow which encorporates a Boussinesq buoyancy
+            approximation which couples an energy balance equation to
+            that of the incompressible Navier Stokes equations. In the
+            figure below we can observe the formation of thermal
+            vortices, a phenomena which is particularly difficult for
+            black box solvers to resolve. </p>
 
-            <img src="imgs/thermo_inc_ra1e6_temp.svg" alt="Thermally Coupled Flow Temperature Solution, Rayleigh number 1e6">
+            $$
+            \begin{aligned}
+            \frac{\partial \bu}{\partial t} + (\bu \cdot \nabla)\bu &- \mu \nabla^2 \bu + \frac{1}{\rho}\nabla p = - \beta \textbf{g} T \\
+            \nabla \cdot \bu &= 0 \\
+            \frac{\partial T}{\partial t} + \bu \cdot \nabla T &- \nabla \cdot (k\nabla  T) = \frac{J}{\rho c_p}
+            $$
 
-            <p align="left"> 2Of course there are many possible further applicatoins of
-            such a technique which can be explored through the
-            introduction of differnt domains, boundary conditions, and
-            physics couplings. Having the ability to explore such
-            scenarios from the command line provides a very fast and
-            robust method for modeling and investigating the behaviour
-            and dynamics of various problems of interest. </p>
+            <img src="imgs/thermo_inc_ra1e6_temp.svg"
+                 alt="Thermally Coupled Flow Temperature Solution, Rayleigh number 1e6"
+                 width="600"  align="center">
+
+            <img src="imgs/thermo_inc_ra1e6_ustream.svg"
+                 alt="Thermally Coupled Flow Velocity Solution, Rayleigh number 1e6"
+                 width="600"  align="center">
+
+            <p align="left"> We can also apply these ideas to
+            elastodynamics problems.  </p>
+
+            $$
+            \begin{aligned}
+            \rho_0 \ddot{\boldsymbol{\phi}} = \nabla^\textbf{X} \cdot [\textbf{P(F)}] &+ \rho_0 \textbf{b}_m \quad \text{ in } B\times (0,\tau) \\
+            \boldsymbol{\phi} &= \textbf{g} \quad \text{ in } \Gamma_d \times (0,\tau) \\
+            \textbf{P(F)}\textbf{N} &= \textbf{h} \quad \text{ in } \Gamma_n \times (0,\tau) \\
+            \boldsymbol{\phi} (\cdot,0) &= \textbf{X} \quad \text{ in } B \\
+            \dot{\boldsymbol{\phi}} (\cdot,0) &= \textbf{V}_0 \quad \text{ in } B
+            \end{aligned}
+            $$
+
+            <p align="left"> In the above formulation $B$ represents
+            the reference configuration and $\textbf{X}$ corresponds
+            to the Lagrangian coordinate system. Furthermore,
+            $\textbf{P(F)}$ is the first Piola-Kirchoff frame
+            indifferent stress response function having $\textbf{F} =
+            \nabla^\textbf{X}\boldsymbol{\phi}$, $\rho_0$ is the
+            reference mass density, $\textbf{b}_m$ is the material
+            description of a specified spatial body force field per
+            unit mass, $\textbf{N}$ is the outward unit normal field
+            on $\partial B$, and $\textbf{g,h,V}_0$ are perscribed
+            fields. </p>
+
+            <img src="imgs/inf_sheet_flat.svg"
+                 alt="Hyper-elasstic Sheet, Initial Flat Configuration"
+                 width="600" align="center">
+
+            <img src="imgs/inf_sheet.svg"
+                 alt="Hyper-elastic Sheet, Inflated Configuration"
+                 width="600" align="center">
+
+
+            <p align="left"> Of course there are many possible further
+            applications of such a technique which can be explored
+            through the introduction of different domains, boundary
+            conditions, and couplings between various physics. Having
+            the ability to explore such scenarios from the command
+            line provides a very fast and robust method for modeling
+            and investigating the behaviour and dynamics of various
+            problems of interest. </p>
 
           </div>
 
