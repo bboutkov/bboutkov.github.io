@@ -108,7 +108,7 @@
             communicated amongst processors.The multigrid technique
             then utilizes such info to construct a grid hierachy and
             projection and interpolation operators which become
-            fundamental pieces to the overall algorithm. </p>
+              fundamental pieces to the overall algorithm. </p>
 
             <img src="imgs/partitioning_refinement.svg"
                  alt="Partitioning and Refinement Example"
@@ -129,9 +129,8 @@
 
             $$b(x) = 2\pi^2 \sin(\pi x)\sin(\pi y)$$.
 
-            <p align="left"> This gives rise to a steady state
-            solution as depicted in the following solution
-            profile: </p>
+            <p align="left"> This gives rise to a solution as depicted
+            in the following: </p>
 
             <br>
 
@@ -140,16 +139,13 @@
             <br>
 
             <p align="left"> As expected, this gives rise to optimal
-            convergence rates which we can compute by comparing our
-            computed solution to an exact solution generated via the
-            method of manufactured solutions. </p>
+              convergence rates which we can inspect by comparing our
+              computed solution to an exact solution generated via the
+              method of manufactured solutions. As we can see, one
+              application of FMG produces a solution on the order of
+              the discretization error. </p>
 
             <img src="imgs/vcycle_vs_fmg.svg" alt="V cycles vs FMG convergence">
-
-            <p align="left">
-              We can also utilize multigrid to resolve more complicated physics problems.
-            </p>
-
 
             <p align="left"> We can similarly study more exotic
             physics. For example here we consider thermally driven
@@ -162,9 +158,10 @@
 
             $$
             \begin{aligned}
-            \frac{\partial \bu}{\partial t} + (\bu \cdot \nabla)\bu &- \mu \nabla^2 \bu + \frac{1}{\rho}\nabla p = - \beta \textbf{g} T \\
-            \nabla \cdot \bu &= 0 \\
-            \frac{\partial T}{\partial t} + \bu \cdot \nabla T &- \nabla \cdot (k\nabla  T) = \frac{J}{\rho c_p}
+            \frac{\partial \boldsymbol{u}}{\partial t} + (\boldsymbol{u} \cdot \nabla)\boldsymbol{u} &- \mu \nabla^2 \boldsymbol{u} + \frac{1}{\rho}\nabla p = - \beta \textbf{g} T \\
+            \nabla \cdot \boldsymbol{u} &= 0 \\
+            \frac{\partial T}{\partial t} + \boldsymbol{u}\cdot \nabla T &- \nabla \cdot (k\nabla  T) = \frac{J}{\rho c_p}
+            \end{aligned}
             $$
 
             <img src="imgs/thermo_inc_ra1e6_temp.svg"
