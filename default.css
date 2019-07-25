@@ -468,8 +468,8 @@ ul.contact li a.icon-rss:before { background: #F2600B; }
 
 #menu .current_page_item a
 {
-    background: #2980b9;
-    color: rgba(255,255,255,1);
+    background: #1C5882;
+    color: #F7F7F7;
 }
 
 #menu .icon
