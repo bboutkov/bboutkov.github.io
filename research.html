@@ -165,15 +165,35 @@
             <img src="imgs/forced_2d.svg" alt="2D Forced Poisson solution">
 
             <br>
+            <br>
 
-            <p align="left"> As expected, this gives rise to optimal
-              convergence rates which we can inspect by comparing our
-              computed solution to an exact solution generated via the
-              method of manufactured solutions. As we can see, one
-              application of FMG produces a solution on the order of
-              the discretization error. </p>
+            <p align="left"> Utilizing such a basic configuration
+              allows us to inspect the convergence rates by comparing
+              our computed solution to an exact solution via the
+              method of manufactured solutions. We know from a priori
+              finite element error estimates that we can expect the
+              error to decay like $O(h^2)$ where $h$ denotes the grid
+              spacing. On the other hand
+              <a href="https://en.wikipedia.org/wiki/Multigrid_method#Computational_cost">
+                Multigrid convergence theory</a>
+
+              dictates that when utilizing the full multigrid method
+              (FMG) one can expect an $O(n)$ convergence rate. With
+              this information we can construct an experiment where we
+              monitor the error decay while solving the problem on
+              sucessivley smaller grid resolutions (via uniform
+              refinement of the $N$ finite elements) each time
+              utilizing exactly one application of a multigrid
+              iteration; we compare the suboptimal V-cycle convergence
+              to the optimal FMG technique in the following
+              plot: </p>
 
             <img src="imgs/vcycle_vs_fmg.svg" alt="V cycles vs FMG convergence">
+
+            <p> As expected, one application of FMG produces a
+              solution on the order of the discretization error while
+              the V-cycle convergence deteriorates after $\sim 10^4$
+              elements.</p>
 
             <p align="left"> We can similarly study more exotic
             physics. For example here we consider thermally driven
