@@ -149,19 +149,18 @@
             which models diffusive processes. Poisson's equation has a
             strong formulation given by: </p>
 
-              $$\nabla u = b(x)$$.
+              $$\nabla^2 \varphi = f$$.
 
-            <p align="left"> where $b(x)$ is some specified function.
-            For a simple scenario we can select a square domain with
-            insulated boundaries alongside an internal forcing with a
-            heat source given by: </p>
+            <p align="left"> where $f(x,y,z)$ is some specified
+            function and $\varphi$ is sought. For a simple scenario we
+            can select a two dimensional square domain with insulated
+            boundaries alongside an internal forcing with a heat
+            source given by: </p>
 
-            $$b(x) = 2\pi^2 \sin(\pi x)\sin(\pi y)$$.
+            $$f(x,y,z) = 2\pi^2 \sin(\pi x)\sin(\pi y)$$.
 
-            <p align="left"> This gives rise to a solution as depicted
-            in the following: </p>
-
-            <br>
+            <p align="left"> This gives rise to a radially symmetric
+            solution as depicted in the following image: </p>
 
             <img src="imgs/forced_2d.svg" alt="2D Forced Poisson solution">
 
