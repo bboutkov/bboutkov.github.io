@@ -75,9 +75,12 @@
             <br>
             <p align="left"> Recently I've spent good chunk of time
               implementing and studying the efficacy of utilizing
-              geometric Multigrid (GMG) for solving partial differential
-              equations (PDEs) on unstructured grids distributed over
-              arbitrary processor counts.</p>
+              <a href="https://en.wikipedia.org/wiki/Multigrid_method">geometric
+              Multigrid (GMG)</a> for
+              solving
+              <a href="https://en.wikipedia.org/wiki/Partial_differential_equation">partial
+              differential equations (PDEs)</a> on unstructured grids
+              distributed over arbitrary processor counts.</p>
 
             <br>
 
@@ -111,22 +114,24 @@
 
             <br>
             <p align="left">
-            In order to better understand the method we can define a
-            sequence of grids denoted $\{G_i\}$, and we denote by
-            $\#G_i$ the number of mesh elements within a given grid
-            $G_i$. For simplicity we assume that this grid sequence is
-            ordered based on the count of the finite elements so that
-            we have: $\#G_f >... > \#G_i > ... > \#G_c$ where we adopt
-            the notation so that $G_f$ and $G_c$ correspond
-            respectively to the finest and coarsest grids. </p>
+            In order to better understand the method we can tesselate
+            our PDE domain and define a sequence of grids denoted
+            $\{G_i\}$, and denote by $\#G_i$ the number of mesh
+            elements within a given grid $G_i$. For simplicity we
+            assume that this grid sequence is ordered based on the
+            count of the finite elements so that we have: $\#G_f >...
+            > \#G_i > ... > \#G_c$ where we adopt the notation so that
+            $G_f$ and $G_c$ correspond respectively to the finest and
+            coarsest grids. This grid sequences then serves as a
+            fundamental component to the Multigrid technique.</p>
 
             <br>
 
             <p align="left"> The libMesh library is then used to
-            partition the domain between processors, refine the mesh,
-            and then manage local-to-global degree of freedom
-            information as well as ghosted element info which must be
-            periodically communicated between processors. The
+            partition the domain (i.e. each grid) between processors,
+            refine the mesh, and then manage local-to-global degree of
+            freedom information as well as ghosted element info which
+            must be periodically communicated between processors. The
             following diagram attempts to depict these steps in an
             abstracted manner.</p>
 
