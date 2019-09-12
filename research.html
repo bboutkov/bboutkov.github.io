@@ -149,15 +149,16 @@
             which models diffusive processes. Poisson's equation has a
             strong formulation given by: </p>
 
-              $$\nabla^2 \varphi = f$$.
+              $$\nabla^2 \varphi = f$$
 
             <p align="left"> where $f(x,y,z)$ is some specified
             function and $\varphi$ is sought. For a simple scenario we
-            can select a two dimensional square domain with insulated
-            boundaries alongside an internal forcing with a heat
-            source given by: </p>
+            can let $\varphi$ represent temperature, and select a two
+            dimensional square domain $\Gamma$ with insulated boundaries
+            alongside an internal forcing with a heat source given
+            by: </p>
 
-            $$f(x,y,z) = 2\pi^2 \sin(\pi x)\sin(\pi y)$$.
+            $$f(x,y,z) = 2\pi^2 \sin(\pi x)\sin(\pi y)$$
 
             <p align="left"> This gives rise to a radially symmetric
             solution as depicted in the following image: </p>
@@ -172,7 +173,7 @@
               our computed solution to an exact solution via the
               method of manufactured solutions. We know from a priori
               finite element error estimates that we can expect the
-              error to decay like $O(h^2)$ where $h$ denotes the grid
+              error in a Poisson problem to decay like $O(h^2)$, where $h$ denotes the grid
               spacing. On the other hand
               <a href="https://en.wikipedia.org/wiki/Multigrid_method#Computational_cost">
                 Multigrid convergence theory</a>
@@ -192,17 +193,19 @@
 
             <p> As expected, one application of FMG produces a
               solution on the order of the discretization error while
-              the V-cycle convergence deteriorates after $\sim 10^4$
-              elements.</p>
+              the V-cycle convergence deteriorates after increasing
+              the problem size to $\sim 10^4$ elements.</p>
 
-            <p align="left"> We can similarly study more exotic
-            physics. For example here we consider thermally driven
-            flow which incorporates a Boussinesq buoyancy
-            approximation which couples an energy balance equation to
-            that of the incompressible Navier Stokes equations. In the
-            figure below we can observe the formation of thermal
-            vortexes, a phenomena which is particularly difficult for
-            black box solvers to resolve. </p>
+            <br>
+            <p align="left"> Cleverly constructing the solver
+            infrastructure in an element-agnostic and parallelizable
+            manner allows us to leverage Multigrid in order to study
+            more exotic physics at a high resolution. For example we
+            can consider thermally driven fluid flow which incorporates a
+            Boussinesq buoyancy approximation that couples the energy
+            balance equation to that of the incompressible Navier
+            Stokes equations.
+            </p>
 
             $$
             \begin{aligned}
@@ -212,6 +215,78 @@
             \end{aligned}
             $$
 
+            <p align="left"> In this formulation we seek to solve for
+            the velocity of the fluid $\boldsymbol{u}$, the pressure
+            $p$, and temperature $T$ for all time $t \in (0,\tau)$.
+            Here $\mu$ represents the kinematic viscosity,
+            $\textbf{g}$ gravity forces,$\rho$ the density, while
+            $\beta$ corresponds to the thermal expansion coefficient
+            driving the buoyancy, $c_p$ the specific heat at constant
+            pressure, $k$ is the thermal diffusivity constant, and $J$
+            is the rate per unit volume of internal heat production,
+            which for our purposes will be assumed to be zero. For the
+            sake of continuity from previous examples we retain the
+            domain of the unit square, but now impose no slip boundary
+            conditions for the velocity, adiabatic boundary conditions
+            for the temperature on a pair of opposing walls, and
+            assign Dirichlet temperature boundary conditions on the
+            remaining temperature boundaries so that we have:
+            </p>
+
+            $$ \begin{aligned} \boldsymbol{u} &=0 \text{ on } \Gamma \times (0,\tau) \\ T
+              &= T_D \text{ on } \Gamma_D \times (0,\tau) \\ \nabla T
+              \cdot \textbf{n} &= 0 \text{ on } \Gamma_N \times
+              (0,\tau) \end{aligned} $$
+
+            <p align="left"> We solve this nonlinear system of
+            equations using
+              <a href="https://en.wikipedia.org/wiki/Newton%27s_method#Nonlinear_systems_of_equations">Newtons
+              Method</a> while discretizing in the usual finite
+              element manner. Proceeding as such leads to the large
+              linear system shown below, a system which must often be
+              solved in parallel due to high dimensional nature of the
+              of the linear problem. </p>
+
+            $$
+            \begin{equation}
+	    \begin{bmatrix}
+	    F	& B & M_1 \\
+	    B^{\top} & 0 & 0   \\
+	    M_2	& 0 & K
+	    \end{bmatrix}
+	    \begin{bmatrix}
+	    \boldsymbol{u} \\
+	    p \\
+	    T
+	    \end{bmatrix} =
+	    \begin{bmatrix}
+	    f_1 \\
+	    f_2 \\
+	    f_3
+	    \end{bmatrix}
+	    \end{equation}
+            $$
+
+            <p align="left"> This system admits a block structure
+	      where the $F,B$ and $B^\top$ matrixes are the Jacobian
+	      components for a pure Navier-Stokes formulation, while $M_1$,
+	      $M_2$ and $K$ blocks arise from the temperature contribution
+	      Jacobian terms. With proper grouping of terms and variables
+	      one can notice that both the $(0,0)$ and $(2,2)$ block appear
+	      elliptic for moderate parameter values. Thus these blocks
+	      become natural candidates for the application of Multigrid. </p>
+
+            <p align="left"> Using Multigrid as a preconditioner to the appropriate
+	      components of the linear system in conjunction with a
+              <a href="https://en.wikipedia.org/wiki/Krylov_subspace">Krylov
+                accelerator</a> allows for optimal time-to-solutions
+                and is achieved in a manner which is independent of
+                input configurations and parameters. In the figure
+                below we present the solution to the steady state case
+                from above where can observe the formation of thermal
+                vortexes, a phenomena which is particularly difficult
+                for standard black box solvers to resolve.</p>
+
             <img src="imgs/thermo_inc_ra1e6_temp.svg"
                  alt="Thermally Coupled Flow Temperature Solution, Rayleigh number 1e6"
                  width="600"  align="center">
@@ -220,6 +295,7 @@
                  alt="Thermally Coupled Flow Velocity Solution, Rayleigh number 1e6"
                  width="600"  align="center">
 
+            <br>
             <p align="left"> We can also apply these ideas to
             elastodynamics problems.  </p>
 
