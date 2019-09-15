@@ -83,16 +83,18 @@
             <p align="left"> Geometric Multigrid is regarded as a
             particularly effective solution technique; it's
             algorithmically optimal ($O(n)$) in both memory
-            requirements, as well as computational cost. Furthermore,
-            if one employs load balanced domain decomposition
-            techniques GMG retains its optimal properties under
-            parallelization. The overall methodology operates by
-            smoothing the solution errors (or residuals) on a collection
-            of coarser sub-problems whose information can then be used
-            to repeatedly solve the originally desired fine grid
-            problem in a highly efficient fashion. The method is
-            algorithmically scaleable, and it converges to the
-            solution in a fixed number of iterations that is
+            requirements as well as computational cost, it naturally
+            complements iterative solution techniques from the realm of linear
+            algebra as it can be understood as a preconditioning
+            strategy. Furthermore, if one employs load balanced
+            domain decomposition techniques GMG retains its optimal
+            properties under parallelization. The overall methodology
+            operates by smoothing the solution errors (or residuals)
+            on a collection of coarser sub-problems whose information
+            can then be used to repeatedly solve the originally
+            desired fine grid problem in a highly efficient fashion.
+            The method is algorithmically scaleable, and it converges
+            to the solution in a fixed number of iterations that is
             independent of the mesh resolution.
 
             A key aspect and difficulty of such a technique is the
@@ -123,13 +125,15 @@
 
             <br>
 
-            <p align="left"> The libMesh library is then used to
-            partition the domain (i.e. each grid) between processors,
-            refine the mesh, and then manage local-to-global degree of
-            freedom information as well as ghosted element info which
-            must be periodically communicated between processors. The
-            following diagram attempts to depict these steps in an
-            abstracted manner.</p>
+            <p align="left">As such problems are often too large to be
+            solved directly and on one computer, the libMesh library
+            is then used to partition the domain (i.e. each grid)
+            between processors, refine the mesh, and then manage
+            local-to-global degree of freedom information as well as
+            ghosted element info which must be periodically
+            communicated between processors. The following diagram
+            attempts to depict these steps in an abstracted
+            manner.</p>
 
             <img src="imgs/partitioning_refinement.svg"
                  alt="Partitioning and Refinement Example"
@@ -138,10 +142,9 @@
             <br>
             <p align="left"> Upon establishing the grid hierarchy the
             Multigrid technique utilizes the degree of freedom map
-            managed by libMesh to construct projection and
-            interpolation operators which become fundamental pieces
-            allowing the algorithm to transfer information between
-              grids.</p>
+            managed by libMesh to construct projection and restriction
+            operators which become fundamental pieces allowing the
+            algorithm to transfer information between grids.</p>
 
              <p align="left"> As a simple example of the solver in
             action we can
